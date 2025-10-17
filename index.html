@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" x-data="portfolio()" x-init="mounted()" x-bind:class="theme" class="scroll-smooth">
+<html lang="en" x-data="portfolio()" x-init="mounted()" :class="theme" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title x-text="profile.name + ' – Portfolio'">Portfolio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title x-text="profile.name + ' – Software Developer'">Portfolio</title>
+  <meta name="description" content="Portfolio of Saifullah Shahen – Software Developer (Backend & Full‑Stack). Django, DRF, FastAPI, PostgreSQL, Celery, WebSockets, Redis, Elasticsearch, Docker, Next.js, Tailwind CSS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
@@ -11,302 +15,460 @@
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            brand: '#6366f1', // indigo-500
-            accent: '#06b6d4', // cyan-500
-            soft: '#f8fafc',   // slate-50
-          }
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          colors: { brand: '#6366f1', brandDark: '#4f46e5', accent: '#06b6d4' },
+          boxShadow: { soft: '0 10px 30px -12px rgba(2,6,23,0.2)' },
+          backgroundImage: { grid: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)' }
         }
       }
     }
   </script>
+  <style> ::selection{background:#06b6d4;color:#0b1020} </style>
 </head>
-<body class="bg-soft dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen flex flex-col">
+<body class="bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-200 min-h-screen flex flex-col">
+  <!-- Decorative backdrop -->
+  <div class="pointer-events-none fixed inset-0 -z-10 opacity-60 dark:opacity-100">
+    <div class="absolute inset-0 bg-gradient-to-b from-brand/5 via-transparent to-transparent dark:from-brand/10"></div>
+    <div class="absolute inset-0 bg-grid [background-size:22px_22px]"></div>
+    <div class="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full blur-3xl bg-brand/20 dark:bg-brand/25"></div>
+    <div class="absolute -bottom-40 -left-40 w-[520px] h-[520px] rounded-full blur-3xl bg-accent/20 dark:bg-accent/25"></div>
+  </div>
 
   <!-- Navbar -->
-   <nav class="fixed w-full z-50 bottom-0 md:top-0 md:bottom-auto bg-white/90 dark:bg-gray-900/90 shadow flex justify-center">
-    <div class="flex items-center justify-between w-full max-w-4xl mx-auto px-6 md:px-12 py-3">
-      <div class="hidden md:flex items-center gap-4">
-        <img :src="profile.photo" alt="Profile Photo" class="h-10 w-10 rounded-full ring-2 ring-brand object-cover fade-in" />
-        <span class="text-xl font-bold text-brand dark:text-accent" x-text="profile.name"></span>
+  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:backdrop-blur bg-white/70 dark:bg-slate-950/60 border-b border-white/40 dark:border-white/10">
+    <nav class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+      <a href="#about" class="flex items-center gap-3">
+        <img :src="profile.photo" alt="Photo" class="h-9 w-9 rounded-full ring-2 ring-brand/60 object-cover" />
+        <span class="text-lg font-semibold text-slate-900 dark:text-white" x-text="profile.name"></span>
+      </a>
+      <div class="hidden md:flex items-center gap-5 text-sm font-semibold">
+        <a href="#about" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.about')">About</a>
+        <a href="#skills" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.skills')">Skills</a>
+        <a href="#work" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.experience')">Experience</a>
+        <a href="#projects" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.projects')">Projects</a>
+        <a href="#education" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.education')">Education</a>
+        <a href="#cv" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.cv')">CV</a>
+        <a href="#contact" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.contact')">Contact</a>
+        <div class="flex items-center gap-2 ml-2">
+          <button @click="setLang('en')" :class="lang==='en' ? 'text-brand dark:text-accent underline' : 'opacity-70'">EN</button>
+          <span class="opacity-50">/</span>
+          <button @click="setLang('de')" :class="lang==='de' ? 'text-brand dark:text-accent underline' : 'opacity-70'">DE</button>
+        </div>
+        <button @click="toggleTheme" class="ml-2 px-2 py-1 rounded-md hover:bg-slate-200/60 dark:hover:bg-white/10" :aria-label="theme==='dark'?'Switch to light':'Switch to dark'">
+          <span x-text="theme==='dark'?'☀️':'🌙'"></span>
+        </button>
       </div>
-      <div class="flex gap-3 items-center text-sm font-semibold whitespace-nowrap overflow-x-auto">
-        <a href="#about" class="hover:text-accent transition">About</a>
-        <a href="#skills" class="hover:text-accent transition">Skills</a>
-        <a href="#work" class="hover:text-accent transition">Experience</a>
-        <a href="#education" class="hover:text-accent transition">Education</a>
-        <a href="#projects" class="hover:text-accent transition">Projects</a>
-        <a href="#contact" class="hover:text-accent transition">Contact</a>
-        <button @click="toggleTheme"
-                class="ml-3 text-lg px-2 py-1 rounded focus:outline-none hover:bg-brand/10 dark:hover:bg-accent/20 transition"
-                :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-          <span x-text="theme === 'dark' ? '☀️' : '🌙'"></span>
+      <button class="md:hidden px-3 py-1 rounded-md hover:bg-slate-200/60 dark:hover:bg-white/10" @click="mobileOpen = !mobileOpen">☰</button>
+    </nav>
+    <!-- Mobile menu -->
+    <div x-show="mobileOpen" x-transition class="md:hidden border-t border-white/40 dark:border-white/10">
+      <div class="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-3 text-sm font-semibold">
+        <a @click="mobileOpen=false" href="#about" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.about')">About</a>
+        <a @click="mobileOpen=false" href="#skills" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.skills')">Skills</a>
+        <a @click="mobileOpen=false" href="#work" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.experience')">Experience</a>
+        <a @click="mobileOpen=false" href="#projects" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.projects')">Projects</a>
+        <a @click="mobileOpen=false" href="#education" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.education')">Education</a>
+        <a @click="mobileOpen=false" href="#cv" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.cv')">CV</a>
+        <a @click="mobileOpen=false" href="#contact" class="hover:text-brand dark:hover:text-accent" x-text="t('nav.contact')">Contact</a>
+        <div class="flex items-center gap-3">
+          <button @click="setLang('en'); mobileOpen=false" class="px-2 py-1 rounded hover:bg-slate-200/60 dark:hover:bg-white/10">English</button>
+          <button @click="setLang('de'); mobileOpen=false" class="px-2 py-1 rounded hover:bg-slate-200/60 dark:hover:bg-white/10">Deutsch</button>
+        </div>
+        <button @click="toggleTheme" class="mt-1 w-fit px-2 py-1 rounded-md hover:bg-slate-200/60 dark:hover:bg-white/10">
+          <span x-text="theme==='dark'?'☀️  Light':'🌙  Dark'"></span>
         </button>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <main class="flex-1 pb-20 md:pb-0">
-        <img :src="profile.cover" alt="Cover" class="absolute inset-0 h-60 w-full object-cover opacity-20 pointer-events-none top-0 left-0 z-0" />
+  <main class="flex-1">
+    <!-- Hero -->
+    <section id="about" class="relative overflow-hidden">
+      <div class="mx-auto max-w-6xl px-4 pt-16 md:pt-24">
+        <div class="grid lg:grid-cols-[1.1fr,0.9fr] gap-10 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand/20 dark:border-accent/30 bg-brand/5 dark:bg-accent/10 px-3 py-1 text-xs font-semibold text-brand dark:text-accent mb-4" x-text="t('hero.badge')">Open to Part‑time / Working‑Student / Full‑time</div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              <span x-text="t('hero.heading1')">Building scalable backends</span>
+              <span class="block text-transparent bg-clip-text bg-gradient-to-r from-brand to-accent" x-text="t('hero.heading2')">with Python & Django</span>
+            </h1>
+            <p class="mt-4 text-lg text-slate-700 dark:text-slate-300" x-text="lang==='de' ? profile.about_de : profile.about"></p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <!-- <a :href="'mailto:'+profile.email" class="inline-flex items-center gap-2 rounded-full bg-brand text-white px-5 py-2.5 font-semibold shadow-soft hover:bg-brandDark" x-text="t('cta.contact')">Contact</a> -->
+              <a href="#projects" class="inline-flex items-center gap-2 rounded-full bg-slate-900/5 dark:bg-white/10 px-5 py-2.5 font-semibold hover:bg-slate-900/10 dark:hover:bg-white/15" x-text="t('cta.viewProjects')">View Projects</a>
+              <template x-if="!profile.social.github.hidden">
+                <a :href="profile.social.github.url" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-slate-900/10 dark:border-white/20 px-5 py-2.5 font-semibold hover:bg-slate-900/5 dark:hover:bg-white/10">GitHub</a>
+              </template>
+              <template x-if="!profile.social.linkedin.hidden">
+                <a :href="profile.social.linkedin.url" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-slate-900/10 dark:border-white/20 px-5 py-2.5 font-semibold hover:bg-slate-900/5 dark:hover:bg-white/10">LinkedIn</a>
+              </template>
+              <template x-if="!profile.social.leetcode.hidden">
+                <a :href="profile.social.leetcode.url" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-slate-900/10 dark:border-white/20 px-5 py-2.5 font-semibold hover:bg-slate-900/5 dark:hover:bg-white/10">LeetCode</a>
+              </template>
+            </div>
+            <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+              <div class="rounded-xl border border-slate-900/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-4 py-3"><dt class="font-semibold" x-text="t('label.location')">Location</dt><dd class="text-slate-600 dark:text-slate-300" x-text="profile.location"></dd></div>
+              <div class="rounded-xl border border-slate-900/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-4 py-3"><dt class="font-semibold">Email</dt><dd class="text-slate-600 dark:text-slate-300" x-text="profile.email"></dd></div>
+            </dl>
+          </div>
+          <div class="relative">
+            <div class="relative mx-auto w-64 h-64 md:w-80 md:h-80">
+              <!-- Circular photo (no rectangular white area) -->
+              <img :src="profile.photo" alt="Profile" class="absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl ring-2 ring-brand/40" />
+              <div class="absolute -z-10 -inset-4 rounded-full bg-gradient-to-tr from-brand/30 to-accent/30 blur-2xl"></div>
+              
+            </div>
+            <!-- quick badges -->
+            <div class="mt-6 flex flex-wrap gap-3 justify-center">
+              <span class="px-3 py-1.5 text-xs font-semibold rounded-full bg-brand/10 text-brand dark:bg-accent/10 dark:text-accent">Django • DRF • FastAPI</span>
+              <span class="px-3 py-1.5 text-xs font-semibold rounded-full bg-brand/10 text-brand dark:bg-accent/10 dark:text-accent">PostgreSQL • Redis • Celery</span>
+              <span class="px-3 py-1.5 text-xs font-semibold rounded-full bg-brand/10 text-brand dark:bg-accent/10 dark:text-accent">WebSockets • Elasticsearch • Docker</span>
+            </div>
 
-    <!-- Hero and About -->
-    <section id="about" class="pt-32 pb-12 text-center flex flex-col items-center bg-white/70 dark:bg-gray-900/40">
-            <img :src="profile.photo" alt="Profile" class="w-32 h-32 object-cover rounded-full border-4 border-brand/70 shadow-xl mx-auto fade-in" />
-
-      <h1 class="text-3xl md:text-4xl font-bold text-brand dark:text-accent mb-2" x-text="profile.name"></h1>
-      <h2 class="text-lg text-accent dark:text-cyan-300 font-semibold mb-3" x-text="profile.role"></h2>
-      <p class="mx-auto max-w-xl text-lg text-gray-700 dark:text-gray-200 mb-4" x-text="profile.about"></p>
-      <div class="flex flex-wrap items-center justify-center gap-4 text-base text-gray-600 dark:text-gray-400 mb-2">
-        <span><b>Location:</b> <span x-text="profile.location"></span></span>
-        <span><b>Email:</b> <a class="underline hover:text-brand" :href="`mailto:${profile.email}`" x-text="profile.email"></a></span>
-        <span><b>Phone:</b> <a class="underline hover:text-brand" :href="`tel:${profile.phone}`" x-text="profile.phone"></a></span>
-      </div>
-      <div class="flex gap-4 mt-2 justify-center">
-        <a :href="profile.github" target="_blank" title="GitHub" class="hover:text-black dark:hover:text-white">
-          <svg width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.19c0 4.47 2.87 8.26 6.84 9.61.5.1.68-.22.68-.48 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.36-3.37-1.36-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.03 1.53 1.03.9 1.56 2.36 1.11 2.94.85.09-.66.36-1.11.65-1.37-2.22-.25-4.56-1.15-4.56-5.12 0-1.13.39-2.06 1.03-2.78-.1-.25-.45-1.27.09-2.65 0 0 .84-.28 2.75 1.06a9.2 9.2 0 0 1 5 0C15.1 6.9 15.93 7.18 15.93 7.18c.54 1.38.19 2.4.09 2.65.64.72 1.03 1.65 1.03 2.78 0 4-2.34 4.86-4.57 5.11.37.33.69.98.69 1.97 0 1.43-.01 2.59-.01 2.94 0 .27.18.59.69.48C19.12 20.45 22 16.66 22 12.19 22 6.58 17.52 2 12 2z"/></svg>
-        </a>
-        <a :href="profile.linkedin" target="_blank" title="LinkedIn" class="hover:text-brand dark:hover:text-accent">
-          <svg width="24" height="24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.238-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.762-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.785-1.75-1.746 0-.961.784-1.744 1.75-1.744s1.75.783 1.75 1.744c0 .961-.784 1.746-1.75 1.746zm13.5 11.268h-3v-5.604c0-1.337-.025-3.062-1.865-3.062-1.867 0-2.153 1.459-2.153 2.966v5.7h-3v-10h2.881v1.367h.041c.403-.764 1.387-1.566 2.857-1.566 3.054 0 3.619 2.008 3.619 4.623v5.576z"/></svg>
+                <!-- CV Download -->
+    <section id="cv" class="py-16">
+      <div class="mx-auto max-w-3xl px-4 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4" x-text="t('section.cv')">Curriculum Vitae</h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-6" x-text="t('cv.note')">Download my CV in your preferred language.</p>
+        <div class="flex items-center justify-center gap-3 mb-6">
+          <button @click="setLang('en')" :class="lang==='en' ? 'bg-brand text-white' : 'bg-slate-900/5 dark:bg-white/10 text-slate-800 dark:text-slate-200'" class="px-4 py-2 rounded-full font-semibold">English</button>
+          <button @click="setLang('de')" :class="lang==='de' ? 'bg-brand text-white' : 'bg-slate-900/5 dark:bg-white/10 text-slate-800 dark:text-slate-200'" class="px-4 py-2 rounded-full font-semibold">Deutsch</button>
+        </div>
+        <a :href="getCv()" :download="lang==='de' ? 'cv_de.pdf' : 'cv_eng.pdf'" class="inline-flex items-center gap-2 rounded-full bg-brand hover:bg-brandDark text-white font-semibold px-6 py-3 shadow-soft">
+          <span x-text="t('cv.download')">Download CV</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h6a4 4 0 014 4v5a4 4 0 01-4 4M7 16v5m0 0h10m-10 0l3-3m7 3l-3-3"/></svg>
         </a>
       </div>
     </section>
-
-    <!-- Achievements -->
-    <section class="py-4" id="achievements" x-show="achievements.length">
-      <div class="max-w-2xl mx-auto flex flex-wrap gap-4 justify-center">
-        <template x-for="ach in achievements" :key="ach.title + ach.year">
-          <span class="inline-block px-4 py-2 bg-brand/10 text-brand font-semibold rounded-xl ring-2 ring-brand/10">
-            <span x-text="ach.title"></span><template x-if="ach.count">&times;<span x-text="ach.count"></span></template>
-            <span class="text-xs"> @ <span x-text="ach.place"></span> (<span x-text="ach.year"></span>)</span>
-          </span>
-        </template>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Skills -->
-    <section id="skills" class="py-8 bg-white dark:bg-gray-800/70">
-      <h2 class="text-2xl font-bold text-brand dark:text-accent mb-2 text-center">Skills</h2>
-      <div class="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
-        <template x-for="sk in skills" :key="sk.category">
-          <div class="min-w-28">
-            <div class="font-bold text-brand mb-2 text-center" x-text="sk.category"></div>
-            <div class="flex flex-wrap gap-2 justify-center">
-              <template x-for="item in sk.items" :key="item">
-                <span class="bg-brand/10 text-brand font-medium px-3 py-1 rounded-full" x-text="item"></span>
-              </template>
+    <section id="skills" class="py-16">
+      <div class="mx-auto max-w-6xl px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 text-center" x-text="t('section.skills')">Skills</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+          <template x-for="sk in skills" :key="sk.category">
+            <div class="w-full max-w-sm rounded-2xl border border-slate-900/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center justify-between mb-3">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brand/10 text-brand dark:bg-accent/10 dark:text-accent" x-text="sk.category"></span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="item in sk.items" :key="item">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-900/5 text-slate-700 dark:bg-white/5 dark:text-slate-100 border border-slate-900/10 dark:border-white/10" x-text="item"></span>
+                </template>
+              </div>
             </div>
-          </div>
-        </template>
-      </div>
-      <!-- Languages -->
-      <div class="flex justify-center gap-6 mt-6" x-show="languages.length">
-        <template x-for="lang in languages" :key="lang.name">
-          <div class="bg-cyan-100 text-cyan-800 font-medium px-4 py-1 rounded-full" x-text="lang.name + ': ' + lang.level"></div>
-        </template>
+          </template>
+        </div>
       </div>
     </section>
 
-    <!-- Work Experience -->
-    <section id="work" class="py-8 px-4 max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold text-brand dark:text-accent mb-4 text-center">Experience</h2>
-      <div class="flex flex-col gap-6">
-        <template x-for="exp in workExperience" :key="exp.company + exp.from">
-          <div class="border rounded-xl px-6 py-4 shadow-sm transition bg-sky-50 dark:bg-blue-900/50 border-sky-200 dark:border-blue-700">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
-              <div>
-                <div class="text-lg text-sky-700 dark:text-cyan-300 font-semibold" x-text="exp.company"></div>
-                <div class="text-accent dark:text-cyan-200" x-text="exp.title"></div>
+    <!-- Experience -->
+    <section id="work" class="py-16">
+      <div class="mx-auto max-w-4xl px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 text-center" x-text="t('section.experience')">Experience</h2>
+        <div class="space-y-6">
+          <template x-for="exp in workExperience" :key="exp.company + exp.from">
+            <article class="rounded-2xl border border-slate-900/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6 shadow-sm">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900 dark:text-white" x-text="exp.company"></h3>
+                  <p class="text-brand dark:text-accent font-semibold" x-text="exp.title"></p>
+                </div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">
+                  <div class="font-semibold" x-text="`${exp.from} — ${exp.to ? exp.to : t('label.present')}`"></div>
+                  <div class="text-slate-500 dark:text-slate-400" x-text="exp.location"></div>
+                </div>
               </div>
-              <div class="mt-2 md:mt-0 text-sm md:text-right">
-                <div class="text-sky-600 dark:text-cyan-100 font-semibold" x-text="`${exp.from} — ${exp.to ? exp.to : 'Present'}`"></div>
-                <div class="text-gray-400 text-xs" x-text="exp.location"></div>
-              </div>
-            </div>
-            <ul class="list-disc ml-5 mt-2 text-base text-gray-600 dark:text-gray-200 space-y-1">
-              <template x-for="res in exp.responsibilities" :key="res">
-                <li x-text="res"></li>
-              </template>
-            </ul>
-          </div>
-        </template>
-      </div>
-    </section>
-
-    <!-- Education -->
-    <section id="education" class="py-8 px-4 max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold text-brand dark:text-accent mb-4 text-center">Education</h2>
-      <div class="flex flex-col gap-6">
-        <template x-for="edu in education" :key="edu.institution + edu.from">
-          <div class="border rounded-xl px-6 py-4 shadow-sm transition bg-white/80 dark:bg-gray-800/60 border-gray-100 dark:border-gray-700">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
-              <div>
-                <div class="text-lg text-gray-800 dark:text-gray-300 font-semibold" x-text="edu.institution"></div>
-                <div class="text-indigo-500 dark:text-indigo-300" x-text="edu.degree"></div>
-              </div>
-              <div class="mt-2 md:mt-0 text-sm md:text-right">
-                <div class="text-gray-500 dark:text-gray-400 font-normal" x-text="`${edu.from} — ${edu.to ? edu.to : 'Present'}`"></div>
-                <div class="text-gray-400 text-xs" x-text="edu.location"></div>
-              </div>
-            </div>
-          </div>
-        </template>
+              <ul class="mt-3 list-disc ml-5 space-y-1 text-[15px]">
+                <template x-for="res in (lang==='de' && exp.responsibilities_de ? exp.responsibilities_de : exp.responsibilities)" :key="res">
+                  <li x-text="res"></li>
+                </template>
+              </ul>
+            </article>
+          </template>
+        </div>
       </div>
     </section>
 
     <!-- Projects -->
-    <section id="projects" class="py-8 bg-white/80 dark:bg-gray-800/60">
-      <h2 class="text-2xl font-bold text-brand dark:text-accent mb-5 text-center">Projects</h2>
-      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <template x-for="proj in projects" :key="proj.name">
-          <div class="bg-white shadow-lg rounded-xl p-6 border-b-4 border-accent dark:bg-gray-800 dark:border-cyan-600 hover:-translate-y-1 transition">
-            <h3 class="text-xl font-semibold mb-2 text-brand dark:text-cyan-300" x-text="proj.name"></h3>
-            <div class="flex gap-2 mb-2">
-              <template x-for="tech in proj.tech" :key="tech">
-                <span class="bg-brand/10 text-brand px-2 py-1 rounded-full text-xs font-medium" x-text="tech"></span>
-              </template>
-            </div>
-            <p class="mb-2 text-gray-700 dark:text-gray-200 text-base" x-text="proj.description"></p>
-            <ul class="list-disc ml-5 text-gray-600 dark:text-gray-200 space-y-1 text-sm">
-              <template x-for="dtl in proj.details" :key="dtl">
-                <li x-text="dtl"></li>
-              </template>
-            </ul>
-          </div>
-        </template>
+    <section id="projects" class="py-16">
+      <div class="mx-auto max-w-6xl px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 text-center" x-text="t('section.projects')">Projects</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <template x-for="proj in projects" :key="proj.name">
+            <article class="group relative overflow-hidden rounded-2xl border border-slate-900/10 dark:border-white/10 bg-white/80 dark:bg-white/5 shadow-sm hover:-translate-y-1 hover:shadow-md transition">
+              <div class="h-1 w-full bg-gradient-to-r from-brand/60 via-cyan-400/60 to-brand/60 dark:from-brand/60 dark:via-accent/60 dark:to-brand/60"></div>
+              <div class="p-6">
+                <div class="flex items-start justify-between gap-4">
+                  <h3 class="text-xl font-semibold text-slate-900 dark:text-white" x-text="proj.name"></h3>
+                  <template x-if="proj.url">
+                    <a :href="proj.url" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-brand/10 text-brand dark:bg-accent/10 dark:text-accent" x-text="t('cta.visit')">Visit →</a>
+                  </template>
+                </div>
+                <p class="mt-2 text-slate-700 dark:text-slate-300" x-text="lang==='de' && proj.description_de ? proj.description_de : proj.description"></p>
+                <div class="flex flex-wrap gap-2 mt-3 mb-4">
+                  <template x-for="tech in proj.tech" :key="proj.name + '-' + tech">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-900/5 text-slate-700 dark:bg-white/5 dark:text-slate-100 border border-slate-900/10 dark:border-white/10" x-text="tech"></span>
+                  </template>
+                </div>
+                <dl class="grid sm:grid-cols-3 gap-3 text-sm">
+                  <div>
+                    <dt class="font-semibold" x-text="t('proj.what')">What</dt>
+                    <dd class="text-slate-700 dark:text-slate-300" x-text="lang==='de' && proj.what_de ? proj.what_de : proj.what"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold" x-text="t('proj.about')">About</dt>
+                    <dd class="text-slate-700 dark:text-slate-300" x-text="lang==='de' && proj.about_de ? proj.about_de : proj.about"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold" x-text="t('proj.how')">How</dt>
+                    <dd class="text-slate-700 dark:text-slate-300" x-text="lang==='de' && proj.how_de ? proj.how_de : proj.how"></dd>
+                  </div>
+                </dl>
+                <ul class="mt-4 list-disc ml-5 space-y-1 text-sm">
+                  <template x-for="dtl in (lang==='de' && proj.details_de ? proj.details_de : proj.details)" :key="proj.name + '-d-' + dtl">
+                    <li x-text="dtl"></li>
+                  </template>
+                </ul>
+              </div>
+            </article>
+          </template>
+        </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="py-12 px-4 max-w-2xl mx-auto">
-      <h2 class="text-2xl font-bold text-brand dark:text-accent mb-4 text-center">Contact</h2>
-      <form
-        action="https://formspree.io/f/yourformid" method="POST"
-        class="bg-white/90 dark:bg-gray-800/70 rounded-xl shadow p-8 space-y-6"
-        @submit="success = true"
-      >
-        <div>
-          <label class="block text-left text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200">Name</label>
-          <input type="text" name="name" required class="w-full px-4 py-2 rounded border focus:ring-brand focus:border-accent outline-none transition bg-soft dark:bg-gray-900" placeholder="Your Name" />
+    <!-- Education -->
+    <section id="education" class="py-16">
+      <div class="mx-auto max-w-4xl px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 text-center" x-text="t('section.education')">Education</h2>
+        <div class="space-y-6">
+          <template x-for="edu in education" :key="edu.institution + edu.from">
+            <div class="rounded-2xl border border-slate-900/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900 dark:text-white" x-text="edu.institution"></h3>
+                  <p class="text-brand dark:text-accent font-semibold" x-text="edu.degree"></p>
+                </div>
+                <div class="text-sm text-slate-600 dark:text-slate-300">
+                  <div x-text="`${edu.from} — ${edu.to ? edu.to : t('label.present')}`"></div>
+                  <div class="text-slate-500 dark:text-slate-400" x-text="edu.location"></div>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
-        <div>
-          <label class="block text-left text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200">Email</label>
-          <input type="email" name="email" required class="w-full px-4 py-2 rounded border focus:ring-brand focus:border-accent outline-none transition bg-soft dark:bg-gray-900" placeholder="you@example.com" />
-        </div>
-        <div>
-          <label class="block text-left text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200">Message</label>
-          <textarea name="message" rows="4" required class="w-full px-4 py-2 rounded border focus:ring-brand focus:border-accent outline-none transition bg-soft dark:bg-gray-900" placeholder="Say hello..."></textarea>
-        </div>
-        <button type="submit" class="w-full bg-accent hover:bg-brand dark:bg-brand dark:hover:bg-accent text-white font-semibold py-3 rounded-full transition shadow">Send Message</button>
-        <template x-if="success">
-          <div class="text-green-600 mt-2">Thank you for contacting me! I will respond soon.</div>
-        </template>
-      </form>
+      </div>
     </section>
 
-    <footer class="text-center mt-10 mb-6 text-gray-500 dark:text-gray-300">
-      &copy; 2025 <span x-text="profile.name"></span>
-    </footer>
+
+
+    <!-- Contact -->
+    <section id="contact" class="py-16">
+      <div class="mx-auto max-w-3xl px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 text-center" x-text="t('section.contact')">Contact</h2>
+        <form action="https://formspree.io/f/mvgqzybq" method="POST" @submit="success=true" class="rounded-2xl border border-slate-900/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6 shadow-sm space-y-5">
+          <div>
+            <label class="block text-sm font-semibold mb-1" x-text="t('form.name')">Name</label>
+            <input type="text" name="name" required class="w-full px-4 py-2 rounded-lg border border-slate-900/10 dark:border-white/10 bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-brand/50" :placeholder="t('form.namePh')" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Email</label>
+            <input type="email" name="email" required class="w-full px-4 py-2 rounded-lg border border-slate-900/10 dark:border-white/10 bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-brand/50" :placeholder="t('form.emailPh')" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1" x-text="t('form.message')">Message</label>
+            <textarea name="message" rows="4" required class="w-full px-4 py-2 rounded-lg border border-slate-900/10 dark:border-white/10 bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-brand/50" :placeholder="t('form.messagePh')"></textarea>
+          </div>
+          <button type="submit" class="w-full rounded-full bg-brand hover:bg-brandDark text-white font-semibold py-3 shadow-soft" x-text="t('cta.send')">Send Message</button>
+          <template x-if="success"><div class="text-green-600 dark:text-green-400 text-sm" x-text="t('form.success')">Thank you! I will respond soon.</div></template>
+        </form>
+      </div>
+    </section>
   </main>
 
-  <!-- Alpine.js data -->
-  <script>
-    function portfolio() {
-      return {
-        theme: 'light',
-        success: false,
-        profile: {
-          name: "Saifullah Shahen",
-          role: "Full Stack Developer",
-          location: "Nordhausen, Germany",
-          email: "shahensaifullah@gmail.com",
-          phone: "+4915755994093",
-          linkedin: "https://www.linkedin.com/in/your-profile",
-          github: "https://github.com/your-profile",
-          about: "Passionate full stack developer with 2+ years of backend experience...",
-          photo: "images/profile.jpg",
-          cover: "images/cover.jpg"
+  <footer class="py-8 text-center text-sm text-slate-600 dark:text-slate-400">
+    © <span x-text="new Date().getFullYear()"></span> <span class="font-semibold" x-text="profile.name"></span>. <span x-text="t('footer.built')">Built with Tailwind CSS & Alpine.js.</span>
+  </footer>
 
+  <!-- Alpine data -->
+  <script>
+    function portfolio(){
+      return {
+        theme: 'dark',
+        mobileOpen: false,
+        success: false,
+        lang: 'en',
+        i18n: {
+          en: {
+            nav: { about:'About', skills:'Skills', experience:'Experience', projects:'Projects', education:'Education', contact:'Contact', cv:'CV' },
+            hero: { heading1:'Building scalable backends', heading2:'with Python & Django', badge:'Open to Part-time / Working-Student / Full-time' },
+            section: { skills:'Skills', experience:'Experience', projects:'Projects', education:'Education', contact:'Contact', cv:'Curriculum Vitae' },
+            proj: { what:'What', about:'About', how:'How' },
+            label: { location:'Location', present:'Present' },
+            cta: { contact:'Contact', viewProjects:'View Projects', visit:'Visit →', send:'Send Message' },
+            cv: { note:'Download my CV in your preferred language.', download:'Download CV' },
+            form: { name:'Name', namePh:'Your Name', emailPh:'you@example.com', message:'Message', messagePh:'Say hello...', success:'Thank you! I will respond soon.' },
+            footer: { built:'Built with Tailwind CSS & Alpine.js.' }
+          },
+          de: {
+            nav: { about:'Über mich', skills:'Fähigkeiten', experience:'Erfahrung', projects:'Projekte', education:'Ausbildung', contact:'Kontakt', cv:'Lebenslauf' },
+            hero: { heading1:'Skalierbare Backends entwickeln', heading2:'mit Python & Django', badge:'Offen für Werkstudent/Teilzeit/Vollzeit' },
+            section: { skills:'Fähigkeiten', experience:'Erfahrung', projects:'Projekte', education:'Ausbildung', contact:'Kontakt', cv:'Lebenslauf' },
+            proj: { what:'Was', about:'Worum geht es', how:'Wie' },
+            label: { location:'Standort', present:'Gegenwart' },
+            cta: { contact:'Kontakt', viewProjects:'Projekte ansehen', visit:'Besuchen →', send:'Nachricht senden' },
+            cv: { note:'Lade meinen Lebenslauf in der gewünschten Sprache herunter.', download:'Lebenslauf herunterladen' },
+            form: { name:'Name', namePh:'Ihr Name', emailPh:'sie@beispiel.de', message:'Nachricht', messagePh:'Schreiben Sie mir ...', success:'Danke! Ich melde mich in Kürze.' },
+            footer: { built:'Erstellt mit Tailwind CSS & Alpine.js.' }
+          }
+        },
+        profile: {
+          name: 'Saifullah Shahen',
+          role: 'Software Developer',
+          role_de: 'Softwareentwickler',
+          location: 'Ulm, Germany',
+          email: 'shahensaifullah@gmail.com',
+          phone: '+4915755994093',
+          about: "I’m a motivated and detail-oriented Software Developer with over 2 years of professional experience at REPLIQ Limited, specializing in backend and full-stack development. I’ve led greenfield builds, optimized high-traffic APIs, and shipped to production in fast-paced startup environments. Core strengths: Python, Django, REST API architecture, PostgreSQL optimization, Celery, WebSockets, Redis, Elasticsearch, Docker, Next.js, Tailwind CSS.",
+          about_de: "Motivierter und detailorientierter Softwareentwickler mit über 2 Jahren Berufserfahrung bei REPLIQ Limited. Schwerpunkt auf Backend- und Full‑Stack‑Entwicklung: Greenfield‑Projekte, performante REST‑APIs und produktionsreife Deployments in dynamischen Startup‑Umgebungen. Stärken: Python, Django, REST‑Architektur, PostgreSQL‑Optimierung, Celery, WebSockets, Redis, Elasticsearch, Docker, Next.js, Tailwind CSS.",
+          photo: 'images/profile.jpg',
+          social: {
+            github:   { url: 'https://github.com/shahriar350?tab=repositories', hidden: false },
+            linkedin: { url: 'https://www.linkedin.com/in/saifullah-shahen-a9aaa6141/', hidden: false },
+            leetcode: { url: 'https://leetcode.com/u/saifshahriar/', hidden: false }
+          }
         },
         workExperience: [
           {
-            company: "REPLIQ Limited",
-            location: "Dhaka, Bangladesh",
-            title: "Software Developer",
-            from: "2022-12",
-            to: "2025-02",
+            company: 'REPLIQ Limited',
+            location: 'Dhaka, Bangladesh',
+            title: 'Software Developer',
+            from: '2022-12',
+            to: '2025-02',
             responsibilities: [
-              "Built scalable backend APIs with Django & DRF",
-              "Integrated AI features including product recommendations",
-              "Designed PostgreSQL schemas, managed Docker deployments",
-              "Collaborated on frontend with Next.js"
+              'Developed & deployed production REST APIs with Django, DRF, FastAPI; versioning and JWT auth.',
+              'Led backend for multiple greenfield projects after 1 year: architecture, database design, features.',
+              'PostgreSQL schema design, indexing, query optimization; Redis caching; Celery for background jobs.',
+              'Built WebSocket real-time features (notifications, live updates).',
+              'Elasticsearch for search, recommendations, trend forecasting.',
+              'Active PR reviewer with merge permissions; weekly review cadence for code quality.',
+              'Managed staging & production deployments, server reloads, backup monitoring (Celery).',
+              'Dockerized services; Linux/Nginx basics; supported CI/CD pipelines.',
+              'Collaborated with React/Next.js/Tailwind teams for responsive UX.',
+              'Agile/Scrum: sprint planning, peer reviews, continuous improvement.'
+            ],
+            responsibilities_de: [
+              'Produktionsreife REST‑APIs mit Django, DRF und FastAPI entwickelt und bereitgestellt; Versionierung und JWT‑Auth.',
+              'Nach 1 Jahr mehrere Greenfield‑Backends geleitet: Architektur, Datenbankdesign, Feature‑Umsetzung.',
+              'PostgreSQL‑Schemas, Indizes und Abfragen optimiert; Redis‑Caching; Celery‑Jobs im Hintergrund.',
+              'Echtzeit‑Funktionen mit WebSockets (Benachrichtigungen, Live‑Updates) implementiert.',
+              'Elasticsearch für Suche, Empfehlungen und Trend‑Forecasting integriert.',
+              'Aktiver PR‑Reviewer mit Merge‑Rechten; wöchentliche Reviews zur Codequalität.',
+              'Staging‑ & Produktions‑Deployments, Server‑Reloads und Backups (Celery) betreut.',
+              'Services dockerisiert; Linux/Nginx‑Grundlagen; CI/CD‑Pipelines unterstützt.',
+              'Eng mit React/Next.js/Tailwind‑Teams für responsives UX zusammengearbeitet.',
+              'Agile/Scrum: Sprint‑Planung, Peer‑Reviews, kontinuierliche Verbesserung.'
             ]
           }
         ],
         education: [
-          {
-            degree: "MSc. Computer Engineering for IoT Systems",
-            institution: "Hochschule Nordhausen",
-            from: "2024-10",
-            to: "",
-            location: "Nordhausen, Germany"
-          }
+          { degree: 'M.Sc. Artificial Intelligence and Data Analytics', institution: 'Hochschule Neu-Ulm', from: '2025-09', to: '', location: 'Neu-Ulm, Germany' },
+          { degree: 'M.Eng. Computer Engineering for IoT Systems', institution: 'Hochschule Nordhausen', from: '2024-10', to: '2025-08', location: 'Nordhausen, Germany' },
+          { degree: 'B.Sc. Computer Science and Engineering', institution: 'Bangladesh University of Business and Technology', from: '2017', to: '2021', location: 'Dhaka, Bangladesh' }
         ],
         skills: [
-          { category: "Backend", items: ["Django", "DRF", "FastAPI", "Python"] },
-          { category: "DevOps & Tools", items: ["Docker", "Celery", "Git", "WebSocket", "JWT"] },
-          { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS"] },
-          { category: "Database", items: ["PostgreSQL", "Redis", "Elasticsearch"] },
-          { category: "Other", items: ["REST APIs", "AI Feature Integration", "Agile", "Tortoise ORM"] }
-        ],
-        languages: [
-          { name: "English", level: "Fluent" },
-          { name: "German", level: "Beginner" }
+          { category: 'Backend', items: ['Django','Django REST Framework (DRF)','FastAPI','Python','Celery','WebSockets','Real-time Systems'] },
+          { category: 'Database & Search', items: ['PostgreSQL (Schema, Indexing, Optimization)','Redis (Caching & Queues)','Elasticsearch (Search & Recommendations)','SQL'] },
+          { category: 'DevOps & Tools', items: ['Docker','Git & GitHub (PR Reviews, Merges)','Linux & Nginx','CI/CD Pipelines','Server Deployment & Management'] },
+          { category: 'Frontend', items: ['Next.js','React','Vuejs','Tailwind CSS','Responsive UI','API Integration'] },
+          { category: 'Other', items: ['REST API Architecture','System Design','Agile/Scrum','AI Feature Integration','Code Review & QA'] }
         ],
         projects: [
           {
-            name: "HealthOS",
-            description: "B2B Pharmaceutical Ordering & Delivery System",
-            tech: ["Django", "PostgreSQL", "Celery"],
+            name: 'HealthOS',
+            url: 'https://healthos.io/',
+            description: 'B2B Pharmaceutical Ordering & Delivery System',
+            description_de: 'B2B‑System für Apothekenbestellungen und Lieferungen',
+            tech: ['Django','DRF','PostgreSQL','Celery','Redis','Elasticsearch','WebSockets','Docker','Next.js','Tailwind CSS'],
+            what: 'Nationwide B2B platform connecting distributors, marketing reps, and pharmacies.',
+            what_de: 'Landesweite B2B‑Plattform, die Großhändler, Außendienst und Apotheken verbindet.',
+            about: 'Orders via web/mobile or field reps; real-time delivery tracking; ops dashboards and forecasting.',
+            about_de: 'Bestellungen per Web/App oder Außendienst; Echtzeit‑Tracking, Operations‑Dashboards und Forecasting.',
+            how: 'Django + DRF core (Orders/Products/Stock), tuned PostgreSQL (indexes & raw SQL), Celery workflows, Redis caching/queues, Elasticsearch search/ads, WebSockets live tracking, Dockerized.',
+            how_de: 'Kern mit Django+DRF (Bestellung/Produkte/Bestand), optimiertes PostgreSQL (Indizes & Raw‑SQL), Celery‑Workflows, Redis‑Caching/Queues, Elasticsearch für Suche/Ads, WebSockets für Live‑Tracking, dockerisierte Deployments.',
             details: [
-              "Backend development for medicine order fulfillment",
-              "Real-time tracking & predictive analytics"
+              'Led backend for Orders, Product, and Stock with SQL/ORM optimization.',
+              'Real-time tracking, predictive stock forecasting, internal ops dashboards.',
+              'Elasticsearch search + WhatsApp/phone APIs for notifications.',
+              'Scaled high-volume workflows with Celery, Redis, and WebSockets.'
+            ],
+            details_de: [
+              'Backend für Bestellungen, Produkte und Lager geführt; SQL/ORM optimiert.',
+              'Echtzeit‑Tracking, Bestandsprognosen, interne Operations‑Dashboards.',
+              'Elasticsearch‑Suche + WhatsApp/Telefon‑APIs für Benachrichtigungen.',
+              'Skalierung großer Workloads mit Celery, Redis und WebSockets.'
             ]
           },
           {
-            name: "HRPro",
-            description: "Video Interview Platform",
-            tech: ["Django", "DRF", "Next.js", "Postgres"],
+            name: 'HRPro',
+            url: 'https://www.prohr.io/',
+            description: 'AI-powered Video Interview Platform with ATS integration',
+            description_de: 'KI‑gestützte Video‑Interview‑Plattform mit ATS‑Integration',
+            tech: ['Django','DRF','PostgreSQL','Celery','Redis','Twilio','WebSockets','Docker','Next.js','Tailwind CSS'],
+            what: 'Automates candidate video interviews and centralizes ATS.',
+            what_de: 'Automatisiert Video‑Interviews und bündelt ATS‑Prozesse.',
+            about: 'HR templates with randomized questions; candidates record per-question videos; reviewers assess segments with RBAC & audit trails.',
+            about_de: 'HR erstellt Vorlagen mit zufälligen Fragen; Kandidat:innen beantworten abschnittsweise per Video; Reviewer bewerten je Frage mit Rollenrechten & Audit‑Trail.',
+            how: 'Django–Next.js, Tailwind UI, Twilio video, WebSockets for real-time, Celery for scheduling/processing, PostgreSQL + Redis for scoring/queues, built-in email engine (templates, bulk send).',
+            how_de: 'Django–Next.js, Tailwind‑UI, Twilio‑Video, WebSockets für Echtzeit, Celery für Planung/Verarbeitung, PostgreSQL + Redis für Scoring/Queues, integrierte E‑Mail‑Engine (Vorlagen, Bulk‑Send).',
             details: [
-              "Automated candidate interview management",
-              "Video answers for recruiters"
+              'Automated scoring combines CV parsing and interview marks into a unified score.',
+              'Segmented video review by question with reviewer notes and role-based access.',
+              'Bulk email from admin using generic or custom templates; notes per candidate.',
+              'Real-time interactions and async workflows for scheduling, processing, notifications.'
+            ],
+            details_de: [
+              'Automatisches Scoring kombiniert CV‑Parsing und Interview‑Noten zu einem Gesamtscore.',
+              'Segmentierte Video‑Reviews pro Frage mit Reviewer‑Notizen und rollenbasiertem Zugriff.',
+              'Massen‑E‑Mails aus dem Admin mit Standard‑/Custom‑Vorlagen; Notizen pro Kandidat:in.',
+              'Echtzeit‑Interaktionen und asynchrone Workflows für Planung, Verarbeitung und Benachrichtigungen.'
+            ]
+          },
+          {
+            name: 'Pharmik',
+            url: 'https://www.pharmik.xyz/',
+            description: 'B2C platform for pharmacists (HealthOS sub-brand)',
+            description_de: 'B2C‑Plattform für Apotheker:innen (HealthOS‑Sub‑Brand)',
+            tech: ['Django','DRF','PostgreSQL','Celery','Redis','WebSockets'],
+            what: 'Direct-order portal for pharmacists complementing B2B flows.',
+            what_de: 'Direktbestell‑Portal für Apotheken als Ergänzung zu B2B‑Prozessen.',
+            about: 'Browse inventory, place orders, track status; distributors fulfill via HealthOS or main suppliers.',
+            about_de: 'Bestand durchsuchen, bestellen, Status verfolgen; Ausführung über HealthOS oder Großhändler.',
+            how: 'Greenfield build: Django/DRF backend, hot-path schemas, Redis caching, Celery lifecycle jobs, WebSockets live updates; led a team of 4 backend devs.',
+            how_de: 'Greenfield‑Aufbau: Django/DRF‑Backend, Hot‑Path‑Schemas, Redis‑Caching, Celery‑Lifecycle‑Jobs, WebSockets Live‑Updates; Leitung eines 4‑köpfigen Backend‑Teams.',
+            details: [
+              'Greenfield backend; led 4‑dev team in a startup setup.',
+              'Architecture, code reviews, and direct client requirement refinement.',
+              'Optimized high-traffic endpoints with caching, indexes, lean serializers.',
+              'Real-time order events and background notifications.'
+            ],
+            details_de: [
+              'Greenfield‑Backend; Leitung eines 4‑köpfigen Teams im Startup‑Umfeld.',
+              'Architektur, Code‑Reviews und direkte Anforderungsabstimmung mit Kund:innen.',
+              'Optimierte Hot‑Path‑Endpoints (Caching, Indizes, schlanke Serializer).',
+              'Echtzeit‑Order‑Events und Hintergrund‑Benachrichtigungen.'
             ]
           }
         ],
-        achievements: [
-          {
-            title: "Employee of the Month",
-            count: 2,
-            year: 2024,
-            place: "REPLIQ Limited"
-          },
-          {
-            title: "Team of the Month",
-            year: 2024,
-            place: "REPLIQ Limited"
-          }
-        ],
-        toggleTheme() {
-          this.theme = this.theme === 'dark' ? 'light' : 'dark';
-          localStorage.setItem("theme", this.theme);
-        },
-        mounted() {
-          const savedTheme = localStorage.getItem("theme");
-          if(savedTheme) {
-            this.theme = savedTheme;
-          } else if(window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            this.theme = 'dark';
-          }
-        }
+        toggleTheme(){ this.theme = this.theme==='dark' ? 'light' : 'dark'; localStorage.setItem('theme', this.theme); },
+        setLang(l){ this.lang = l; localStorage.setItem('lang', l); document.documentElement.setAttribute('lang', l==='de'?'de':'en'); },
+        getCv(){ return this.lang==='de' ? 'files/cv_de.pdf' : 'files/cv_eng.pdf' },
+        t(key){ const parts = key.split('.'); let obj = this.i18n[this.lang]; for(const p of parts){ obj = obj?.[p]; } return obj || key; },
+        mounted(){ const savedTheme = localStorage.getItem('theme'); if(savedTheme){ this.theme = savedTheme } else if(window.matchMedia('(prefers-color-scheme: dark)').matches){ this.theme='dark' } const savedLang = localStorage.getItem('lang'); if(savedLang){ this.lang = savedLang; document.documentElement.setAttribute('lang', this.lang==='de'?'de':'en'); } }
       }
     }
   </script>
